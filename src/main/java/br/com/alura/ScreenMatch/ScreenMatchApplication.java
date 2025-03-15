@@ -1,8 +1,7 @@
 package br.com.alura.ScreenMatch;
 
-import br.com.alura.ScreenMatch.model.Serie;
+import br.com.alura.ScreenMatch.principal.Principal;
 import br.com.alura.ScreenMatch.service.ConsumoApiService;
-import br.com.alura.ScreenMatch.service.ConverteDados;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,16 +17,10 @@ public class ScreenMatchApplication implements CommandLineRunner {
 	@Override
 	//método chamado na main
 	public void run(String... args) throws Exception {
-		//sabe-se que está usando uma variável ConsumoApi pelo new
-		var consumoApiService = new ConsumoApiService();
-		//chamando método obterDados de consumoApiService
-		var json = consumoApiService.obterDados("https://www.omdbapi.com/?t=gilmore+girls&apikey=6585022c");
-		System.out.println(json);
 
-		//Usar o conversor
-		ConverteDados conversor = new ConverteDados();
-		//informando o conversor para que transforme o json em Serie
-		Serie dados = conversor.obterDados(json, Serie.class);
-		System.out.println(dados);
+//----------------------Chamando o exibeMenu (classe Principal)
+		//instanciando a classe principal
+		Principal principal = new Principal();
+		principal.exibeMenu();
 	}
 }
