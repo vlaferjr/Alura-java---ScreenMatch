@@ -7,6 +7,8 @@ import br.com.alura.ScreenMatch.model.Temporada;
 import br.com.alura.ScreenMatch.service.ConsumoApiService;
 import br.com.alura.ScreenMatch.service.ConverteDados;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -100,6 +102,30 @@ public class Principal {
         //impressão da lista
         System.out.println("---------- Top 5 episódios exibindo as temporadas -------------");
         episodios.forEach(System.out::println);
+
+// ---------------- Filtro para saber a partir de quando o usuário quer ver os episódios
+        System.out.println("---------- Imprimir os episódios a partir de uma data -------------");
+        System.out.println("A partir de qual ano você deseja ver os episódios?");
+        int ano = leitura.nextInt();
+        leitura.nextLine(); //sempre colocar o nextLine depois do nextInt
+
+        //formar uma data a 01/01/ano digitado
+        LocalDate dataBusca = LocalDate.of(ano,1,1);
+
+        //formatador de data para padrão brasileiro
+        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        //usar a lista episódios já criada
+        episodios.stream()
+                //para cada episódio pegar a data de lançamento não nula e após(after) da data de busca
+                .filter(ep -> !ep.equals(null) && ep.getDataLancamento().isAfter(dataBusca))
+                //para cada episódio filtrado, imprimir
+                .forEach(ep -> System.out.println(
+                        "Temporada: " + ep.getTemporada() +
+                                "\nEpisódio: " + ep.getTitulo() +
+                                //formatando para padrão Brasil
+                                "\nLançamnto: " + ep.getDataLancamento().format(formatador)
+                ));
     }
 }
 
