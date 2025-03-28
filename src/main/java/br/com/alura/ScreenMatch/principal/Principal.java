@@ -78,14 +78,24 @@ public class Principal {
                 .flatMap(temporada -> temporada.episodios().stream())
                 .collect(Collectors.toList());
 
-        System.out.println("-------- Top 5 episódios ------------");
+        System.out.println("-------- Top 5 episódios (letra maiúscula)------------");
         listaEpisodios.stream()
                 //não pega os que tem avaliação N/A
                 .filter(episodio -> !episodio.avaliacao().equals("N/A"))
+                //ver cada etapa do stream depois que filtrou
+                .peek(recordEpisodio -> System.out.println("filtrando para que não apareça N/A " + recordEpisodio))
                 //ordenando de forma decrescente pela avaliação de cada episódio
                 .sorted(Comparator.comparing(RecordEpisodio::avaliacao).reversed())
+                //ver cada etapa do stream depois que ordenou
+                .peek(recordEpisodio -> System.out.println("ordenação em ordem alfabética " + recordEpisodio))
                 //limitando nos 5 primeiros episódios
                 .limit(5)
+                //ver cada etapa do stream limitar em 5
+                .peek(recordEpisodio -> System.out.println("limitação em 5 episódios " + recordEpisodio))
+                //colocando os títulos em letra maiúscula
+                .map(recordEpisodio -> recordEpisodio.titulo().toUpperCase())
+                //ver cada etapa do stream depois que transformou em maiúscula
+                .peek(recordEpisodio -> System.out.println("transformação em letra maiúscula " + recordEpisodio))
                 //imprimindo cada episódio
                 .forEach(System.out::println);
 
