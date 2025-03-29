@@ -74,30 +74,30 @@ public class Principal {
 
 // ------------------------------- Pegar os 5 melhores episódios entre todas as temporadas
         /*ter uma lista de episódios que serão extraídos de todas as temporadas*/
-        List<RecordEpisodio> listaEpisodios = listaTemporadas.stream()
-                .flatMap(temporada -> temporada.episodios().stream())
-                .collect(Collectors.toList());
-
-        System.out.println("-------- Top 5 episódios (letra maiúscula)------------");
-        listaEpisodios.stream()
-                //não pega os que tem avaliação N/A
-                .filter(episodio -> !episodio.avaliacao().equals("N/A"))
-                //ver cada etapa do stream depois que filtrou
-                .peek(recordEpisodio -> System.out.println("filtrando para que não apareça N/A " + recordEpisodio))
-                //ordenando de forma decrescente pela avaliação de cada episódio
-                .sorted(Comparator.comparing(RecordEpisodio::avaliacao).reversed())
-                //ver cada etapa do stream depois que ordenou
-                .peek(recordEpisodio -> System.out.println("ordenação em ordem alfabética " + recordEpisodio))
-                //limitando nos 5 primeiros episódios
-                .limit(5)
-                //ver cada etapa do stream limitar em 5
-                .peek(recordEpisodio -> System.out.println("limitação em 5 episódios " + recordEpisodio))
-                //colocando os títulos em letra maiúscula
-                .map(recordEpisodio -> recordEpisodio.titulo().toUpperCase())
-                //ver cada etapa do stream depois que transformou em maiúscula
-                .peek(recordEpisodio -> System.out.println("transformação em letra maiúscula " + recordEpisodio))
-                //imprimindo cada episódio
-                .forEach(System.out::println);
+//        List<RecordEpisodio> listaEpisodios = listaTemporadas.stream()
+//                .flatMap(temporada -> temporada.episodios().stream())
+//                .collect(Collectors.toList());
+//
+//        System.out.println("-------- Top 5 episódios (letra maiúscula)------------");
+//        listaEpisodios.stream()
+//                //não pega os que tem avaliação N/A
+//                .filter(episodio -> !episodio.avaliacao().equals("N/A"))
+//                //ver cada etapa do stream depois que filtrou
+//                .peek(recordEpisodio -> System.out.println("filtrando para que não apareça N/A " + recordEpisodio))
+//                //ordenando de forma decrescente pela avaliação de cada episódio
+//                .sorted(Comparator.comparing(RecordEpisodio::avaliacao).reversed())
+//                //ver cada etapa do stream depois que ordenou
+//                .peek(recordEpisodio -> System.out.println("ordenação em ordem alfabética " + recordEpisodio))
+//                //limitando nos 5 primeiros episódios
+//                .limit(5)
+//                //ver cada etapa do stream limitar em 5
+//                .peek(recordEpisodio -> System.out.println("limitação em 5 episódios " + recordEpisodio))
+//                //colocando os títulos em letra maiúscula
+//                .map(recordEpisodio -> recordEpisodio.titulo().toUpperCase())
+//                //ver cada etapa do stream depois que transformou em maiúscula
+//                .peek(recordEpisodio -> System.out.println("transformação em letra maiúscula " + recordEpisodio))
+//                //imprimindo cada episódio
+//                .forEach(System.out::println);
 
 
 // -------------saber qual temporada pertence a cada episódio
@@ -113,29 +113,51 @@ public class Principal {
         System.out.println("---------- Top 5 episódios exibindo as temporadas -------------");
         episodios.forEach(System.out::println);
 
+//  -------------Filtro para saber qual temporada pertence a cada episódio
+        System.out.println("\n---------- Pesquisando um título de um episódio -------------");
+        System.out.println("Digite o trecho de um título: ");
+        //declaração de trecho título (usuário digitar)
+        String trechoTitulo = leitura.nextLine();
+        //Optional -> Guarda um episódio e podemos ver se é nulo ou não
+        Optional <ClasseEpisodio> episodioBuscado = episodios.stream()
+                // transformar a pesqusiar em minúscula e se o título pesquisado, tiver um trecho do título
+                .filter(recordEpisodio -> recordEpisodio.getTitulo().toLowerCase().contains(trechoTitulo))
+                //encontrar a primeira referência a ser buscada
+                .findFirst();
+
+        //verificar se o episódio foi encontrado
+        if(episodioBuscado.isPresent()){
+            //imprime a temporada a que o episódio pertence
+            System.out.println("Episódio encontrado!");
+            System.out.println("Temporada: " + episodioBuscado.get().getTemporada());
+        } else{
+            //informna que o episódio não foi encontrado
+            System.out.println("Episódio não encontrado!");
+        }
+
 // ---------------- Filtro para saber a partir de quando o usuário quer ver os episódios
-        System.out.println("---------- Imprimir os episódios a partir de uma data -------------");
-        System.out.println("A partir de qual ano você deseja ver os episódios?");
-        int ano = leitura.nextInt();
-        leitura.nextLine(); //sempre colocar o nextLine depois do nextInt
-
-        //formar uma data a 01/01/ano digitado
-        LocalDate dataBusca = LocalDate.of(ano,1,1);
-
-        //formatador de data para padrão brasileiro
-        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-
-        //usar a lista episódios já criada
-        episodios.stream()
-                //para cada episódio pegar a data de lançamento não nula e após(after) da data de busca
-                .filter(ep -> !ep.equals(null) && ep.getDataLancamento().isAfter(dataBusca))
-                //para cada episódio filtrado, imprimir
-                .forEach(ep -> System.out.println(
-                        "Temporada: " + ep.getTemporada() +
-                                "\nEpisódio: " + ep.getTitulo() +
-                                //formatando para padrão Brasil
-                                "\nLançamnto: " + ep.getDataLancamento().format(formatador)
-                ));
+//        System.out.println("---------- Imprimir os episódios a partir de uma data -------------");
+//        System.out.println("A partir de qual ano você deseja ver os episódios?");
+//        int ano = leitura.nextInt();
+//        leitura.nextLine(); //sempre colocar o nextLine depois do nextInt
+//
+//        //formar uma data a 01/01/ano digitado
+//        LocalDate dataBusca = LocalDate.of(ano,1,1);
+//
+//        //formatador de data para padrão brasileiro
+//        DateTimeFormatter formatador = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//
+//        //usar a lista episódios já criada
+//        episodios.stream()
+//                //para cada episódio pegar a data de lançamento não nula e após(after) da data de busca
+//                .filter(ep -> !ep.equals(null) && ep.getDataLancamento().isAfter(dataBusca))
+//                //para cada episódio filtrado, imprimir
+//                .forEach(ep -> System.out.println(
+//                        "Temporada: " + ep.getTemporada() +
+//                                "\nEpisódio: " + ep.getTitulo() +
+//                                //formatando para padrão Brasil
+//                                "\nLançamnto: " + ep.getDataLancamento().format(formatador)
+//                ));
     }
 }
 
