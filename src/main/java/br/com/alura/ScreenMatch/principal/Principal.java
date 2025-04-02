@@ -114,26 +114,26 @@ public class Principal {
         episodios.forEach(System.out::println);
 
 //  -------------Filtro para saber qual temporada pertence a cada episódio
-        System.out.println("\n---------- Pesquisando um título de um episódio -------------");
-        System.out.println("Digite o trecho de um título: ");
-        //declaração de trecho título (usuário digitar)
-        String trechoTitulo = leitura.nextLine();
-        //Optional -> Guarda um episódio e podemos ver se é nulo ou não
-        Optional <ClasseEpisodio> episodioBuscado = episodios.stream()
-                // transformar a pesqusiar em minúscula e se o título pesquisado, tiver um trecho do título
-                .filter(recordEpisodio -> recordEpisodio.getTitulo().toLowerCase().contains(trechoTitulo))
-                //encontrar a primeira referência a ser buscada
-                .findFirst();
-
-        //verificar se o episódio foi encontrado
-        if(episodioBuscado.isPresent()){
-            //imprime a temporada a que o episódio pertence
-            System.out.println("Episódio encontrado!");
-            System.out.println("Temporada: " + episodioBuscado.get().getTemporada());
-        } else{
-            //informna que o episódio não foi encontrado
-            System.out.println("Episódio não encontrado!");
-        }
+//        System.out.println("\n---------- Pesquisando um título de um episódio -------------");
+//        System.out.println("Digite o trecho de um título: ");
+//        //declaração de trecho título (usuário digitar)
+//        String trechoTitulo = leitura.nextLine();
+//        //Optional -> Guarda um episódio e podemos ver se é nulo ou não
+//        Optional <ClasseEpisodio> episodioBuscado = episodios.stream()
+//                // transformar a pesqusiar em minúscula e se o título pesquisado, tiver um trecho do título
+//                .filter(recordEpisodio -> recordEpisodio.getTitulo().toLowerCase().contains(trechoTitulo))
+//                //encontrar a primeira referência a ser buscada
+//                .findFirst();
+//
+//        //verificar se o episódio foi encontrado
+//        if(episodioBuscado.isPresent()){
+//            //imprime a temporada a que o episódio pertence
+//            System.out.println("Episódio encontrado!");
+//            System.out.println("Temporada: " + episodioBuscado.get().getTemporada());
+//        } else{
+//            //informna que o episódio não foi encontrado
+//            System.out.println("Episódio não encontrado!");
+//        }
 
 // ---------------- Filtro para saber a partir de quando o usuário quer ver os episódios
 //        System.out.println("---------- Imprimir os episódios a partir de uma data -------------");
@@ -158,6 +158,33 @@ public class Principal {
 //                                //formatando para padrão Brasil
 //                                "\nLançamnto: " + ep.getDataLancamento().format(formatador)
 //                ));
+
+// ---------------- Agrupoar as avaliações por temporada
+        //map de integer para double
+        System.out.println("\n---------- Imprimir as avaliações por temporada -------------");
+        Map<Integer, Double> avaliacoesPorTemporada = episodios.stream()
+                //filtrar os episódios com avaliação maior que 0
+                .filter(e -> e.getAvaliacao() > 0)
+                //agrupar os episódios por temporada
+                .collect(Collectors.groupingBy(ClasseEpisodio::getTemporada,
+                        //associar às temporadas pela média de avaliações
+                        Collectors.averagingDouble(ClasseEpisodio::getAvaliacao)));
+        //imprimindo as avaliações por temporada
+        System.out.println(avaliacoesPorTemporada);
+
+// ---------------- Coletando outras estatísticas
+        System.out.println("\n---------- Imprimir estatísticas com base nas avaliações -------------");
+        //Coletando os dados e retornando numa DoubleSummaryStatistics
+        DoubleSummaryStatistics estatisticas = episodios.stream()
+                //filtrando os episódio que tem avaliação maior que 0
+                .filter(e -> e.getAvaliacao() > 0)
+                //coletando os dados e passando para summarizingDouble com base na avaliação
+                .collect(Collectors.summarizingDouble(ClasseEpisodio::getAvaliacao));
+        //imprimindo as estatísticas
+        System.out.println("Média: " + estatisticas.getAverage() + "\n" +
+                "Maior Avaliação: " + estatisticas.getMax() + "\n" +
+                "Menor Avaliação: " + estatisticas.getMin() + "\n" +
+                "Quantidade de avaliações: " + estatisticas.getCount());
     }
 }
 
